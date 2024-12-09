@@ -1,0 +1,14 @@
+{
+  "java.project.sourcePaths": [
+    "java\\src"
+  ],
+  "java.project.referencedLibraries": [
+    "java\\lib\\json-20140107.jar",
+    "d:\\Clothes Sale Mining\\Clothes-Sale-Mining\\java\\lib\\weka.jar"
+  ],
+  "java.project.outputPath": "java\\bin",
+  
+  "code-runner.executorMap": {
+    "java": "cd $dir && javac -cp \"../lib/weka.jar;../lib/json-20140107.jar\" -d \"../bin\" $fileName && cd ../bin && java -cp \"../lib/weka.jar;../lib/json-20140107.jar;.\" $fileNameWithoutExt"
+  }
+}

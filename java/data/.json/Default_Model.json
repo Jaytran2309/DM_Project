@@ -1,0 +1,152 @@
+{
+    "default_J48": {
+        "Overall Accuracy": 85.19,
+        "Class Metrics": {
+            "Stable": {
+                "TP Rate": 0.808,
+                "FP Rate": 0.120,
+                "Precision": 0.808,
+                "Recall": 0.808,
+                "F-Measure": 0.808,
+                "MCC": 0.687,
+                "ROC Area": 0.872,
+                "PRC Area": 0.788
+            },
+            "Hot": {
+                "TP Rate": 0.781,
+                "FP Rate": 0.058,
+                "Precision": 0.806,
+                "Recall": 0.781,
+                "F-Measure": 0.794,
+                "MCC": 0.731,
+                "ROC Area": 0.907,
+                "PRC Area": 0.747
+            },
+            "Slow": {
+                "TP Rate": 0.941,
+                "FP Rate": 0.048,
+                "Precision": 0.923,
+                "Recall": 0.941,
+                "F-Measure": 0.932,
+                "MCC": 0.890,
+                "ROC Area": 0.978,
+                "PRC Area": 0.935
+            }
+        },
+        "Weighted Averages": {
+            "TP Rate": 0.852,
+            "FP Rate": 0.078,
+            "Precision": 0.851,
+            "Recall": 0.852,
+            "F-Measure": 0.851,
+            "MCC": 0.769,
+            "ROC Area": 0.920,
+            "PRC Area": 0.834
+        },
+        "Confusion Matrix": [
+            [42, 6, 4],
+            [7, 25, 0],
+            [3, 0, 48]
+        ]
+    },
+    "default_RandomForest": {
+        "Overall Accuracy": 88.89,
+        "Class Metrics": {
+            "Stable": {
+                "TP Rate": 0.865,
+                "FP Rate": 0.096,
+                "Precision": 0.849,
+                "Recall": 0.865,
+                "F-Measure": 0.857,
+                "MCC": 0.766,
+                "ROC Area": 0.954,
+                "PRC Area": 0.905
+            },
+            "Hot": {
+                "TP Rate": 0.844,
+                "FP Rate": 0.039,
+                "Precision": 0.871,
+                "Recall": 0.844,
+                "F-Measure": 0.857,
+                "MCC": 0.814,
+                "ROC Area": 0.975,
+                "PRC Area": 0.942
+            },
+            "Slow": {
+                "TP Rate": 0.941,
+                "FP Rate": 0.036,
+                "Precision": 0.941,
+                "Recall": 0.941,
+                "F-Measure": 0.941,
+                "MCC": 0.905,
+                "ROC Area": 0.994,
+                "PRC Area": 0.990
+            }
+        },
+        "Weighted Averages": {
+            "TP Rate": 0.889,
+            "FP Rate": 0.060,
+            "Precision": 0.889,
+            "Recall": 0.889,
+            "F-Measure": 0.889,
+            "MCC": 0.829,
+            "ROC Area": 0.974,
+            "PRC Area": 0.946
+        },
+        "Confusion Matrix": [
+            [45, 4, 3],
+            [5, 27, 0],
+            [3, 0, 48]
+        ]
+    },
+    "default_NaiveBayes": {
+        "Overall Accuracy": 86.19,
+        "Class Metrics": {
+            "Stable": {
+                "TP Rate": 0.807,
+                "FP Rate": 0.094,
+                "Precision": 0.854,
+                "Recall": 0.807,
+                "F-Measure": 0.830,
+                "MCC": 0.720,
+                "ROC Area": 0.922,
+                "PRC Area": 0.850
+            },
+            "Hot": {
+                "TP Rate": 0.754,
+                "FP Rate": 0.019,
+                "Precision": 0.920,
+                "Recall": 0.754,
+                "F-Measure": 0.829,
+                "MCC": 0.791,
+                "ROC Area": 0.960,
+                "PRC Area": 0.925
+            },
+            "Slow": {
+                "TP Rate": 0.990,
+                "FP Rate": 0.106,
+                "Precision": 0.843,
+                "Recall": 0.990,
+                "F-Measure": 0.911,
+                "MCC": 0.860,
+                "ROC Area": 0.971,
+                "PRC Area": 0.936
+            }
+        },
+        "Weighted Averages": {
+            "TP Rate": 0.862,
+            "FP Rate": 0.081,
+            "Precision": 0.865,
+            "Recall": 0.862,
+            "F-Measure": 0.859,
+            "MCC": 0.790,
+            "ROC Area": 0.949,
+            "PRC Area": 0.898
+        },
+        "Confusion Matrix": [
+            [97, 1, 0],
+            [0, 46, 15],
+            [18, 3, 88]
+        ]
+    }
+}

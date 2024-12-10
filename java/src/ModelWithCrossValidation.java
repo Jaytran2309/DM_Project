@@ -11,6 +11,10 @@ import weka.core.converters.ConverterUtils.DataSource;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.BufferedReader;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -51,10 +55,10 @@ public class ModelWithCrossValidation {
                 modelName = "default_J48";
             } else if (classifierChoice == 2) {
                 classifier = new NaiveBayes();
-                modelName = "default_NaiveBayes";
+                modelName = "tuning_NaiveBayes";
             } else if (classifierChoice == 3) {
                 classifier = getRandomForestClassifier();
-                modelName = "default_RandomForest";
+                modelName = "tuning_RandomForest";
             } else {
                 System.out.println("Invalid choice!");
                 return;
@@ -110,14 +114,14 @@ public class ModelWithCrossValidation {
 
     public static J48 getJ48Classifier() throws Exception {
         J48 j48 = new J48();
-        String[] options = weka.core.Utils.splitOptions("-C 0.25 -M 2"); // Default parameters
+        String[] options = weka.core.Utils.splitOptions("-C 0.1 -M 4"); // Default parameters
         j48.setOptions(options);
         return j48;
     }
 
     public static RandomForest getRandomForestClassifier() throws Exception {
         RandomForest randomForest = new RandomForest();
-        String[] options = weka.core.Utils.splitOptions("-I 100 -K 0 -depth 10 -num-slots 10");
+        String[] options = weka.core.Utils.splitOptions("-I 100 -K 0 -depth 0 -num-slots 1");
         randomForest.setOptions(options);
         return randomForest;
     }
@@ -204,12 +208,32 @@ public class ModelWithCrossValidation {
 
     public static void saveEvaluationResults(Evaluation evaluation, Instances testSet, String modelName)
             throws Exception {
-        String filePath = "../data/.json/Default_Model_Results.json";
+        String filePath = "../data/.json/Default_Model.json";
+        JSONObject allResultsJson;
 
+        // Check if the JSON file already exists
+        File file = new File(filePath);
+        if (file.exists()) {
+            // Read the existing content
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                StringBuilder jsonStringBuilder = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    jsonStringBuilder.append(line);
+                }
+                allResultsJson = new JSONObject(jsonStringBuilder.toString());
+            }
+        } else {
+            // Initialize a new JSON object if file doesn't exist
+            allResultsJson = new JSONObject();
+        }
+
+        // Prepare the current model's evaluation results
         JSONObject resultJson = new JSONObject();
         resultJson.put("Model Name", modelName);
         resultJson.put("Overall Accuracy", evaluation.pctCorrect());
 
+        // Confusion Matrix
         JSONArray confusionMatrixArray = new JSONArray();
         double[][] confusionMatrix = evaluation.confusionMatrix();
         for (double[] row : confusionMatrix) {
@@ -221,6 +245,7 @@ public class ModelWithCrossValidation {
         }
         resultJson.put("Confusion Matrix", confusionMatrixArray);
 
+        // Class Metrics
         JSONObject classMetrics = new JSONObject();
         for (int i = 0; i < testSet.numClasses(); i++) {
             JSONObject metrics = new JSONObject();
@@ -236,19 +261,33 @@ public class ModelWithCrossValidation {
         }
         resultJson.put("Class Metrics", classMetrics);
 
-        FileWriter file = new FileWriter(filePath, true);
-        file.write(resultJson.toString(4));
-        file.flush();
-        file.close();
+        // Add the new model results to the JSON object
+        allResultsJson.put(modelName, resultJson);
 
-        System.out.println("Evaluation results saved at: " + filePath);
+        // Write back to the file
+        try (FileWriter fileWriter = new FileWriter(filePath)) {
+            fileWriter.write(allResultsJson.toString(4));
+            fileWriter.flush();
+        }
+
+        System.out.println("Evaluation results saved successfully to: " + filePath);
     }
 
     public static void printEvaluationMetrics(Evaluation evaluation, Instances testSet) throws Exception {
         System.out.println("=== Detailed Accuracy By Class ===");
         System.out.println("TP Rate\tFP Rate\tPrecision\tRecall\tF-Measure\tMCC\tROC Area\tPRC Area\tClass");
 
+        double totalInstances = evaluation.numInstances();
+        double weightedMCC = 0.0;
+        double totalWeight = 0.0;
+
         for (int i = 0; i < testSet.numClasses(); i++) {
+            double classWeight = evaluation.truePositiveRate(i) + evaluation.falseNegativeRate(i);
+            double classMCC = evaluation.matthewsCorrelationCoefficient(i);
+
+            weightedMCC += classWeight * classMCC;
+            totalWeight += classWeight;
+
             System.out.printf(
                     "%.3f\t%.3f\t%.3f\t\t%.3f\t%.3f\t\t%.3f\t%.3f\t\t%.3f\t\t%s\n",
                     evaluation.truePositiveRate(i),
@@ -256,11 +295,40 @@ public class ModelWithCrossValidation {
                     evaluation.precision(i),
                     evaluation.recall(i),
                     evaluation.fMeasure(i),
-                    evaluation.matthewsCorrelationCoefficient(i),
+                    classMCC,
                     evaluation.areaUnderROC(i),
                     evaluation.areaUnderPRC(i),
                     testSet.classAttribute().value(i));
         }
-        System.out.printf("Overall Accuracy: %.2f%%\n", evaluation.pctCorrect());
+
+        // Normalize Weighted MCC
+        weightedMCC = (totalWeight != 0) ? weightedMCC / totalWeight : 0;
+
+        // Print Weighted Averages
+        System.out.println("\n=== Weighted Averages ===");
+        System.out.printf(
+                "%.3f\t%.3f\t%.3f\t\t%.3f\t%.3f\t\t%.3f\t%.3f\t\t%.3f\t\tWeighted Avg.\n",
+                evaluation.weightedTruePositiveRate(),
+                evaluation.weightedFalsePositiveRate(),
+                evaluation.weightedPrecision(),
+                evaluation.weightedRecall(),
+                evaluation.weightedFMeasure(),
+                weightedMCC,
+                evaluation.weightedAreaUnderROC(),
+                evaluation.weightedAreaUnderPRC());
+
+        // Print Confusion Matrix
+        System.out.println("\n=== Confusion Matrix ===");
+        double[][] confusionMatrix = evaluation.confusionMatrix();
+        for (int i = 0; i < confusionMatrix.length; i++) {
+            for (int j = 0; j < confusionMatrix[i].length; j++) {
+                System.out.printf("%.0f\t", confusionMatrix[i][j]);
+            }
+            System.out.println();
+        }
+
+        // Print Overall Accuracy
+        System.out.printf("\nOverall Accuracy: %.2f%%\n", evaluation.pctCorrect());
     }
+
 }

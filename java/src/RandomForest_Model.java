@@ -1,15 +1,16 @@
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.trees.RandomForest;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+
 import java.io.FileWriter;
+import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
-import weka.classifiers.trees.J48;
-import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
-
-public class J48_Model {
+public class RandomForest_Model {
 
     public static void main(String[] args) {
         try {
@@ -25,11 +26,11 @@ public class J48_Model {
             trainSet.setClassIndex(trainSet.numAttributes() - 1);
             testSet.setClassIndex(testSet.numAttributes() - 1);
 
-            // Get J48 classifier with customizable parameters
-            J48 j48 = getJ48Classifier();
+            // Get RandomForest classifier with customizable parameters
+            RandomForest randomForest = getRandomForestClassifier();
 
             // Train and evaluate the model
-            Evaluation evaluation = trainAndEvaluate(j48, trainSet, testSet);
+            Evaluation evaluation = trainAndEvaluate(randomForest, trainSet, testSet);
 
             // Print evaluation metrics
             printEvaluationMetrics(evaluation, testSet);
@@ -44,12 +45,13 @@ public class J48_Model {
         return source.getDataSet();
     }
 
-    public static J48 getJ48Classifier() throws Exception {
-        J48 j48 = new J48();
+    public static RandomForest getRandomForestClassifier() throws Exception {
+        RandomForest randomForest = new RandomForest();
         // Customize hyperparameters here
-        String[] options = weka.core.Utils.splitOptions("-C 0.1 -M 4"); // Default: confidence factor 0.25, minNumObj 2
-        j48.setOptions(options);
-        return j48;
+        String[] options = weka.core.Utils.splitOptions("-I 100 -K 0 -depth 0 -num-slots 1"); 
+        // -I: number of trees, -K: number of features, -depth: max depth, -num-slots: threads
+        randomForest.setOptions(options);
+        return randomForest;
     }
 
     public static Evaluation trainAndEvaluate(Classifier classifier, Instances trainSet, Instances testSet)
@@ -60,7 +62,7 @@ public class J48_Model {
         // Evaluate the model
         Evaluation evaluation = new Evaluation(trainSet);
         evaluation.evaluateModel(classifier, testSet);
-        saveEvaluationResults(evaluation, testSet, "J48");
+        saveEvaluationResults(evaluation, testSet, "RandomForest");
         return evaluation;
     }
 

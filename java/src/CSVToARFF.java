@@ -7,8 +7,9 @@ public class CSVToARFF {
     public static void main(String[] args) {
         try {
             // Paths to the CSV and ARFF files relative to "java/src/"
-            String csvFilePath = "../data/.csv/data910.csv"; // Input CSV file
-            String arffFilePath = "../data/.arff/data910.arff"; // Output ARFF file
+            String name ="validation";
+            String csvFilePath = "../data/.csv/"+ name +".csv"; // Input CSV file
+            String arffFilePath = "../data/.arff/"+ name +".arff"; // Output ARFF file
 
             // Load CSV file
             CSVLoader loader = new CSVLoader();

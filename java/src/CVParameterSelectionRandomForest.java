@@ -10,7 +10,7 @@ public class CVParameterSelectionRandomForest {
     public static void main(String[] args) {
         try {
             // Load dataset
-            DataSource source = new DataSource("../data/.arff/data910.arff"); // Replace with your
+            DataSource source = new DataSource("../data/.arff/train.arff"); // Replace with your
                                                                                                    // ARFF file path
             Instances data = source.getDataSet();
 

@@ -9,7 +9,7 @@ import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import java.util.Arrays;
 
-public class FeatureSelectionWithNaiveBayes {
+public class FeatureSelectionWithModel {
     public static void main(String[] args) {
         try {
             // Step 1: Load Dataset

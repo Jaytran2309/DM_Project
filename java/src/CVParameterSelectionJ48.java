@@ -6,7 +6,7 @@ import weka.classifiers.Evaluation;
 
 import java.util.Random;
 
-public class CVParameterSelectionExample {
+public class CVParameterSelectionJ48 {
     public static void main(String[] args) {
         try {
             // Load dataset
